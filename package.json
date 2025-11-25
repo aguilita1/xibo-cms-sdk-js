@@ -1,0 +1,75 @@
+{
+  "name": "xibo-cms-sdk-js",
+  "version": "0.1.0",
+  "description": "A comprehensive Node.js library for the Xibo CMS API with OAuth2 authentication, automatic retry logic, rate limiting support, and extensive error handling.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "docs": "typedoc src/index.ts",
+    "prepublishOnly": "npm run build && npm run test && npm run lint",
+    "clean": "rimraf dist",
+    "example:js": "npm run build && node examples/basic-usage.js",
+    "example:ts": "npm run build && npx ts-node examples/basic-usage.ts"
+  },
+  "keywords": [
+    "xibo",
+    "cms",
+    "api",
+    "sdk",
+    "oauth2",
+    "typescript",
+    "nodejs",
+    "digital-signage"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aguilita1/xibo-cms-sdk-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aguilita1/xibo-cms-sdk-js/issues"
+  },
+  "homepage": "https://github.com/aguilita1/xibo-cms-sdk-js#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "p-queue": "^7.4.1",
+    "p-retry": "^5.1.2",
+    "simple-oauth2": "^5.1.0",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.10.0",
+    "@types/simple-oauth2": "^5.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typedoc": "^0.25.4",
+    "typescript": "^5.3.0"
+  }
+}
