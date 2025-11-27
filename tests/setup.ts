@@ -5,7 +5,7 @@
 // Global test configuration
 beforeAll(() => {
   // Set test environment
-  process.env.NODE_ENV = 'test';
+  process.env['NODE_ENV'] = 'test';
 });
 
 afterAll(() => {

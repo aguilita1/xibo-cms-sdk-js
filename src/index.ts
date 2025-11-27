@@ -80,6 +80,13 @@ export {
 } from './utils';
 export type { RetryOptions } from './utils';
 
+// Models
+export * from './models';
+
+// API classes
+export { DisplaysApi } from './api/displays';
+export { BaseApi } from './api/base';
+
 // Default export
 export default XiboClient;
 

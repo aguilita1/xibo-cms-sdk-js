@@ -99,7 +99,7 @@ xibo-cms-sdk-js/
 ```
 
 ### 2.3 API Endpoint Wrappers
-Each API module will follow this pattern:
+Each API module will follow this pattern but only implement endpoints available in API:
 ```typescript
 class LayoutsApi extends BaseApi {
   async search(params: LayoutSearchParams, context?: Context): Promise<PaginatedResponse<Layout>>
@@ -208,6 +208,9 @@ interface XiboConfig {
 - Usage examples in comments
 - Parameter descriptions
 
+### 6.3 TypeScript Examples
+Each TypeScript example will use `./env` file to load environment variables.
+
 ## 7. CI/CD Pipeline (GitHub Actions)
 
 ```yaml
@@ -258,16 +261,37 @@ Workflow stages:
   - ✅ Connection testing
   - ✅ Authentication status monitoring
 
-### 🔄 Phase 2: Essential APIs (Week 2) - NEXT
-- [ ] Base API class implementation
-- [ ] Layouts API
-- [ ] Campaigns API
-- [ ] Displays API
-- [ ] Library/Media API
+### 🔄 Phase 2: Essential API endpoints (Week 2) - IN PROGRESS
+- ✅ Base API class implementation
+- ✅ Displays API + comprehensive unit tests
+- [ ] Layouts includes Layouts and Templates endpoints + unit tests
+- [ ] Playlists + unit tests
+- [ ] Schedules + unit tests
+- [ ] Campaigns + unit tests
+- [ ] Widgets   + unit tests
 - [ ] Basic models and types from Swagger specification
 
-### Phase 3: Extended APIs (Week 3)
-- [ ] Remaining API endpoints (Schedules, Notifications, Playlists, Widgets, etc.)
+### Phase 3: Extended API endpoints (Week 3)
+- [ ] Notifications + unit tests
+- [ ] Library/Media + unit tests
+- [ ] Resolutions + unit tests
+- [ ] Display Groups + unit tests
+- [ ] Display Settings + unit tests
+- [ ] DataSets including `PUT /dataset/{id}/selectfolder` + unit tests
+- [ ] Folders + unit tests
+- [ ] Statistics + unit tests
+- [ ] Users + unit tests
+- [ ] User Groups + unit tests
+- [ ] Commands + unit tests
+- [ ] Dayparting + unit tests
+- [ ] Player Software + unit tests
+- [ ] Tags + unit tests
+- [ ] Menu Boards + unit tests << Mark as Preview ONLY - Not for Production Use
+- [ ] Player Software + unit tests
+- [ ] Action + unit tests
+- [ ] Display Venue + unit tests
+- [ ] Fonts + unit tests
+- [ ] Sync Groups + unit tests
 - [ ] Advanced features (pagination, filtering)
 - [ ] Complete rate limiting implementation
 - [ ] Enhanced context support

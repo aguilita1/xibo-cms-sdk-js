@@ -52,6 +52,22 @@ npm run example:ts
 npx ts-node examples/basic-usage.ts
 ```
 
+### Displays API (TypeScript)
+Comprehensive example demonstrating the Displays API functionality including searching, filtering, getting details, and performing actions on displays.
+
+**Run:**
+```bash
+npx ts-node examples/displays-api.ts
+```
+
+**Features demonstrated:**
+- Search for displays with filters
+- Get specific display details
+- Display status information
+- Available display actions (screenshot, wake on LAN, etc.)
+- Pagination handling
+- Error handling for display operations
+
 ## Example Features Demonstrated
 
 - ✅ **Environment-based configuration** - Load credentials from `.env` file

@@ -2,6 +2,7 @@ import { HttpClient, HttpClientConfig } from './HttpClient';
 import { OAuth2Manager, TokenStorage, MemoryTokenStorage } from '../auth';
 import { XiboConfig, Logger, Context } from '../types';
 import { createLogger } from '../utils/logger';
+import { DisplaysApi } from '../api/displays';
 
 /**
  * Main Xibo CMS SDK client
@@ -11,6 +12,9 @@ export class XiboClient {
   private readonly oauth2Manager: OAuth2Manager;
   private readonly logger: Logger;
   private readonly config: XiboConfig;
+
+  // API endpoints
+  public readonly displays: DisplaysApi;
 
   constructor(config: XiboConfig, tokenStorage?: TokenStorage) {
     this.config = config;
@@ -35,6 +39,9 @@ export class XiboClient {
     };
 
     this.httpClient = new HttpClient(httpConfig, this.oauth2Manager, this.logger);
+
+    // Initialize API endpoints
+    this.displays = new DisplaysApi(this.httpClient);
 
     this.logger.info('XiboClient initialized', {
       baseUrl: config.baseUrl,
