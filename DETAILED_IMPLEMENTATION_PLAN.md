@@ -404,15 +404,15 @@ Workflow stages:
   - ✅ Verify generated types compile without errors
   - ✅  Test post-processing script with sample transformations
   - ✅ Document generation process in README
-- [ ] **Enhanced Runtime Models** (Day 3-4 - uses generated types as base)
+- [ ] **Enhanced Runtime Models** (Day 3-4 - uses generated types as base); tests should omit property instead of setting to undefined dues to strict mode
   - ✅ Create `src/models/Display.ts`:
     - ✅ Zod schema with boolean/date transformers
     - ✅ Enhanced methods: `isLicensed()`, `isAuditingActive()`, `getStatusSummary()`
     - ✅ Unit tests for transformations and methods
-  - [ ] Create `src/models/Layout.ts`:
-    - [ ] Status enum handling (Published/Draft)
-    - [ ] Duration calculations and validation
-    - [ ] Region management utilities
+  - ✅ Create `src/models/Layout.ts`:
+    - ✅ Status enum handling (Published/Draft)
+    - ✅ Duration calculations and validation
+    - ✅ Region management utilities
   - [ ] Create `src/models/Campaign.ts`:
     - [ ] Type discrimination (list vs ad campaigns)
     - [ ] Layout assignment validation
