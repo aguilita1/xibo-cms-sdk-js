@@ -1,5 +1,6 @@
 /**
  * Error classes for the Xibo CMS SDK
+ * Location: src\errors\index.ts
  */
 
 import { XiboError } from './XiboError';

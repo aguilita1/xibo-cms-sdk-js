@@ -1,3 +1,7 @@
+/**
+ * OAuth2 configuration and management for Xibo CMS
+ * Location: src\auth\OAuth2Manager.ts
+ */
 import { AuthorizationCode, ClientCredentials, ModuleOptions } from 'simple-oauth2';
 import { TokenManager, TokenStorage } from './TokenManager';
 import { TokenResponse, XiboConfig, Logger } from '../types';

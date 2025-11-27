@@ -1,3 +1,7 @@
+/**
+ * Common logger configuration for the Xibo CMS SDK
+ * Location: src\utils\logger.ts
+ */
 import winston from 'winston';
 import { Logger, LogLevel } from '../types';
 

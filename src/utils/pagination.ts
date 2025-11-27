@@ -1,3 +1,7 @@
+/**
+ * Pagination logic for data from the Xibo CMS SDK
+ * Location: src\utils\pagination.ts
+ */
 import { PaginatedResponse, PaginationParams } from '../types';
 
 /**

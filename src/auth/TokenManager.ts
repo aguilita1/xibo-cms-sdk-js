@@ -1,3 +1,7 @@
+/**
+ * Token storage and management for the Xibo CMS SDK.
+ * Location: src\auth\TokenManager.ts
+ */
 import { TokenResponse, CachedToken, Logger } from '../types';
 
 /**

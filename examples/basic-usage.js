@@ -1,5 +1,6 @@
 /**
  * Basic usage example for Xibo CMS SDK
+ * Location: examples\basic-usage.js
  * 
  * Before running this example:
  * 1. Copy .env.example to .env

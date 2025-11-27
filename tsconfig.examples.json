@@ -1,0 +1,13 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "noEmit": true,           // examples don't generate output
+      "rootDir": ".",           // allow examples outside src
+      "skipLibCheck": true
+    },
+    "include": [
+      "src/**/*",
+      "examples/**/*"
+    ]
+  }
+  

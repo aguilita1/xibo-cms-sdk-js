@@ -1,437 +1,366 @@
 /**
- * TagLink interface for tags associated with entities
+ * Display Model for the Xibo CMS SDK
+ * Location: src\models\Display.ts
  */
-export interface TagLink {
-  tag: string;
-  tagId: number;
-  value?: string;
-}
+import { Display as GeneratedDisplay, DisplaySearchParams as GeneratedDisplaySearchParams } from '../generated/types/swagger-types';
+import { z } from 'zod';
 
 /**
- * Display entity representing a Xibo display/player
+ * Zod schema for Display with runtime validation and transformations
  */
-export interface Display {
-  /** The ID of this Display */
-  displayId: number;
-  
-  /** The Display Type ID of this Display */
-  displayTypeId?: number;
-  
-  /** The Venue ID of this Display */
-  venueId?: number;
-  
-  /** The Location Address of this Display */
-  address?: string;
-  
-  /** Is this Display mobile? */
-  isMobile?: number;
-  
-  /** The Languages supported in this display location */
-  languages?: string;
-  
-  /** The type of this Display */
-  displayType?: string;
-  
-  /** The screen size of this Display */
-  screenSize?: number;
-  
-  /** Is this Display Outdoor? */
-  isOutdoor?: number;
-  
-  /** The custom ID (an Id of any external system) of this Display */
-  customId?: string;
-  
-  /** The Cost Per Play of this Display */
-  costPerPlay?: number;
-  
-  /** The Impressions Per Play of this Display */
-  impressionsPerPlay?: number;
-  
-  /** Optional Reference 1 */
-  ref1?: string;
-  
-  /** Optional Reference 2 */
-  ref2?: string;
-  
-  /** Optional Reference 3 */
-  ref3?: string;
-  
-  /** Optional Reference 4 */
-  ref4?: string;
-  
-  /** Optional Reference 5 */
-  ref5?: string;
-  
-  /** Flag indicating whether this Display is recording Auditing Information from XMDS */
-  auditingUntil?: number;
-  
-  /** The Name of this Display */
-  display: string;
-  
-  /** The Description of this Display */
-  description?: string;
-  
-  /** The ID of the Default Layout */
-  defaultLayoutId: number;
-  
-  /** The Display Unique Identifier also called hardware key */
-  license: string;
-  
-  /** A flag indicating whether this Display is licensed or not */
-  licensed: number;
-  
-  /** A flag indicating whether this Display is currently logged in */
-  loggedIn?: number;
-  
-  /** A timestamp in CMS time for the last time the Display accessed XMDS */
-  lastAccessed?: number;
-  
-  /** A flag indicating whether the default layout is interleaved with the Schedule */
-  incSchedule: number;
-  
-  /** A flag indicating whether the Display will send email alerts. */
-  emailAlert: number;
-  
-  /** A timeout in seconds for the Display to send email alerts. */
-  alertTimeout?: number;
-  
-  /** The MAC Address of the Display */
-  clientAddress?: string;
-  
-  /** The media inventory status of the Display */
-  mediaInventoryStatus?: number;
-  
-  /** The current Mac Address of the Player */
-  macAddress?: string;
-  
-  /** A timestamp indicating the last time the Mac Address changed */
-  lastChanged?: number;
-  
-  /** A count of Mac Address changes */
-  numberOfMacAddressChanges?: number;
-  
-  /** A timestamp indicating the last time a WOL command was sent */
-  lastWakeOnLanCommandSent?: number;
-  
-  /** A flag indicating whether Wake On Lan is enabled */
-  wakeOnLanEnabled: number;
-  
-  /** A h:i string indicating the time to send a WOL command */
-  wakeOnLanTime?: string;
-  
-  /** The broad cast address for this Display */
-  broadCastAddress?: string;
-  
-  /** The secureOn WOL settings for this display. */
-  secureOn?: string;
-  
-  /** The CIDR WOL settings for this display */
-  cidr?: string;
-  
-  /** The display Latitude */
-  latitude?: number;
-  
-  /** The display longitude */
-  longitude?: number;
-  
-  /** A string representing the player type */
-  clientType?: string;
-  
-  /** A string representing the player version */
-  clientVersion?: string;
-  
-  /** A number representing the Player version code */
-  clientCode?: number;
-  
-  /** The display settings profile ID for this Display */
-  displayProfileId?: number;
-  
-  /** The current layout ID reported via XMDS */
-  currentLayoutId?: number;
-  
-  /** A flag indicating that a screen shot should be taken by the Player */
-  screenShotRequested?: number;
-  
-  /** The number of bytes of storage available on the device. */
-  storageAvailableSpace?: number;
-  
-  /** The number of bytes of storage in total on the device */
-  storageTotalSpace?: number;
-  
-  /** The ID of the Display Group for this Device */
-  displayGroupId?: number;
-  
-  /** The current layout */
-  currentLayout?: string;
-  
-  /** The default layout */
-  defaultLayout?: string;
-  
-  /** The Player Subscription Channel */
-  xmrChannel?: string;
-  
-  /** The Player Public Key */
-  xmrPubKey?: string;
-  
-  /** The last command success, 0 = failure, 1 = success, 2 = unknown */
-  lastCommandSuccess?: number;
-  
-  /** The Device Name for the device hardware associated with this Display */
-  deviceName?: string;
-  
-  /** The Display Timezone, or empty to use the CMS timezone */
-  timeZone?: string;
-  
-  /** Tags associated with this Display */
-  tags?: TagLink[];
-  
-  /** The display bandwidth limit */
-  bandwidthLimit?: number;
-  
-  /** The new CMS Address */
-  newCmsAddress?: string;
-  
-  /** The new CMS Key */
-  newCmsKey?: string;
-  
-  /** The orientation of the Display, either landscape or portrait */
-  orientation?: string;
-  
-  /** The resolution of the Display expressed as a string in the format WxH */
-  resolution?: string;
-  
-  /** Status of the commercial licence for this Display. 0 - Not licensed, 1 - licensed, 2 - trial licence, 3 - not applicable */
-  commercialLicence?: number;
-  
-  /** The TeamViewer serial number for this Display */
-  teamViewerSerial?: string;
-  
-  /** The Webkey serial number for this Display */
-  webkeySerial?: string;
-  
-  /** A comma separated list of groups/users with permissions to this Display */
-  groupsWithPermissions?: string;
-  
-  /** The datetime this entity was created */
-  createdDt?: string;
-  
-  /** The datetime this entity was last modified */
-  modifiedDt?: string;
-  
-  /** The id of the Folder this Display belongs to */
-  folderId?: number;
-  
-  /** The id of the Folder responsible for providing permissions for this Display */
-  permissionsFolderId?: number;
-  
-  /** The count of Player reported faults */
-  countFaults?: number;
-  
-  /** LAN IP Address, if available on the Player */
-  lanIpAddress?: string;
-  
-  /** The Display Group ID this Display is synced to */
-  syncGroupId?: number;
-  
-  /** The OS version of the Display */
-  osVersion?: string;
-  
-  /** The SDK version of the Display */
-  osSdk?: string;
-  
-  /** The manufacturer of the Display */
-  manufacturer?: string;
-  
-  /** The brand of the Display */
-  brand?: string;
-  
-  /** The model of the Display */
-  model?: string;
-}
+export const DisplaySchema = z.object({
+  displayId: z.number().optional(),
+  display: z.string().optional(),
+  auditingUntil: z.string().transform(str => str ? new Date(str) : undefined).optional(),
+  licensed: z.boolean().optional(),
+  loggedIn: z.boolean().optional(),
+  lastAccessed: z.string().transform(str => str ? new Date(str) : undefined).optional(),
+  incSchedule: z.boolean().optional(),
+  emailAlert: z.boolean().optional(),
+  wakeOnLanEnabled: z.boolean().optional(),
+  retired: z.boolean().optional(),
+  createdDt: z.string().transform(str => str ? new Date(str) : undefined).optional(),
+  modifiedDt: z.string().transform(str => str ? new Date(str) : undefined).optional(),
+  // Add other fields as needed with appropriate transformations
+}).passthrough(); // Allow additional properties from the generated interface
 
 /**
- * Parameters for searching displays
+ * Enhanced Display model with business logic and utility methods
+ * 
+ * This class wraps the generated Display interface and provides:
+ * - Type-safe property access
+ * - Business logic methods
+ * - Date/boolean transformations
+ * - Utility functions for common operations
  */
-export interface DisplaySearchParams {
-  /** Filter by Display Id */
-  displayId?: number;
+export class Display {
+  constructor(private data: GeneratedDisplay) {}
+
+  // Enhanced getter methods with proper type transformations
   
-  /** Filter by DisplayGroup Id */
-  displayGroupId?: number;
-  
-  /** Filter by Display Name */
-  display?: string;
-  
-  /** Filter by tags */
-  tags?: string;
-  
-  /** A flag indicating whether to treat the tags filter as an exact match */
-  exactTags?: number;
-  
-  /** When filtering by multiple Tags, which logical operator should be used? AND|OR */
-  logicalOperator?: string;
-  
-  /** Filter by Mac Address */
-  macAddress?: string;
-  
-  /** Filter by Hardware Key */
-  hardwareKey?: string;
-  
-  /** Filter by Client Version */
-  clientVersion?: string;
-  
-  /** Filter by Client Type */
-  clientType?: string;
-  
-  /** Filter by Client Code */
-  clientCode?: string;
-  
-  /** Embed related data, namely displaygroups. A comma separated list of child objects to embed. */
-  embed?: string;
-  
-  /** Filter by authorised flag */
-  authorised?: number;
-  
-  /** Filter by Display Profile */
-  displayProfileId?: number;
-  
-  /** Filter by Display Status ( 1 - up to date, 2 - downloading, 3 - Out of date) */
-  mediaInventoryStatus?: number;
-  
-  /** Filter by Logged In flag */
-  loggedIn?: number;
-  
-  /** Filter by Display Last Accessed date, expects date in Y-m-d H:i:s format */
-  lastAccessed?: string;
-  
-  /** Filter by Folder ID */
-  folderId?: number;
-  
-  /** Filter by whether XMR is registed (1 or 0) */
-  xmrRegistered?: number;
-  
-  /** Filter by whether the player is supported (1 or 0) */
-  isPlayerSupported?: number;
+  /**
+   * Check if the display is currently licensed
+   */
+  get isLicensed(): boolean {
+    return Boolean(this.data.licensed);
+  }
+
+  /**
+   * Check if the display is currently logged in
+   */
+  get isLoggedIn(): boolean {
+    return Boolean(this.data.loggedIn);
+  }
+
+  /**
+   * Get the auditing until date as a proper Date object
+   */
+  get auditingUntilDate(): Date | undefined {
+    return this.data.auditingUntil ? new Date(this.data.auditingUntil) : undefined;
+  }
+
+  /**
+   * Get the last accessed date as a proper Date object
+   */
+  get lastAccessedDate(): Date | undefined {
+    return this.data.lastAccessed ? new Date(this.data.lastAccessed) : undefined;
+  }
+
+  /**
+   * Get the created date as a proper Date object
+   */
+  get createdDate(): Date | undefined {
+    return this.data.createdDt ? new Date(this.data.createdDt) : undefined;
+  }
+
+  /**
+   * Get the modified date as a proper Date object
+   */
+  get modifiedDate(): Date | undefined {
+    return this.data.modifiedDt ? new Date(this.data.modifiedDt) : undefined;
+  }
+
+  // Business logic methods
+
+  /**
+   * Check if auditing is currently active for this display
+   */
+  isAuditingActive(): boolean {
+    const until = this.auditingUntilDate;
+    return until ? until > new Date() : false;
+  }
+
+  /**
+   * Check if the display should send email alerts
+   */
+  shouldSendEmailAlerts(): boolean {
+    return Boolean(this.data.emailAlert);
+  }
+
+  /**
+   * Check if Wake on LAN is enabled
+   */
+  isWakeOnLanEnabled(): boolean {
+    return Boolean(this.data.wakeOnLanEnabled);
+  }
+
+  /**
+   * Check if the display includes the default layout in schedule
+   */
+  includesSchedule(): boolean {
+    return Boolean(this.data.incSchedule);
+  }
+
+  /**
+   * Check if the display is retired
+   */
+  isRetired(): boolean {
+    return Boolean((this.data as any).retired);
+  }
+
+  /**
+   * Check if the display is mobile
+   */
+  isMobileDisplay(): boolean {
+    return Boolean(this.data.isMobile);
+  }
+
+  /**
+   * Check if the display is outdoor
+   */
+  isOutdoorDisplay(): boolean {
+    return Boolean(this.data.isOutdoor);
+  }
+
+  /**
+   * Get a summary of the display's current status
+   */
+  getStatusSummary(): {
+    isOnline: boolean;
+    isLicensed: boolean;
+    hasRecentActivity: boolean;
+    auditingStatus: 'active' | 'inactive' | 'expired';
+    lastSeen?: Date;
+  } {
+    const lastSeen = this.lastAccessedDate;
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+    
+    return {
+      isOnline: this.isLoggedIn,
+      isLicensed: this.isLicensed,
+      hasRecentActivity: lastSeen ? lastSeen > oneHourAgo : false,
+      auditingStatus: this.isAuditingActive() ? 'active' : 
+                     this.auditingUntilDate ? 'expired' : 'inactive',
+      ...(lastSeen && { lastSeen })
+    };
+  }
+
+  /**
+   * Get storage information with calculated percentages
+   */
+  getStorageInfo(): {
+    availableBytes: number;
+    totalBytes: number;
+    usedBytes: number;
+    usedPercentage: number;
+    availablePercentage: number;
+  } | null {
+    const available = this.data.storageAvailableSpace;
+    const total = this.data.storageTotalSpace;
+    
+    if (typeof available !== 'number' || typeof total !== 'number' || total === 0) {
+      return null;
+    }
+    
+    const used = total - available;
+    const usedPercentage = (used / total) * 100;
+    const availablePercentage = (available / total) * 100;
+    
+    return {
+      availableBytes: available,
+      totalBytes: total,
+      usedBytes: used,
+      usedPercentage: Math.round(usedPercentage * 100) / 100,
+      availablePercentage: Math.round(availablePercentage * 100) / 100
+    };
+  }
+
+  /**
+   * Get display resolution as width x height
+   */
+  getResolutionString(): string | undefined {
+    return this.data.resolution;
+  }
+
+  /**
+   * Parse resolution string into width and height
+   */
+  getResolutionDimensions(): { width: number; height: number } | null {
+    const resolution = this.data.resolution;
+    if (!resolution) return null;
+    
+    const match = resolution.match(/^(\d+)x(\d+)$/);
+    if (!match || !match[1] || !match[2]) return null;
+    
+    return {
+      width: parseInt(match[1], 10),
+      height: parseInt(match[2], 10)
+    };
+  }
+
+  /**
+   * Check if the display has any reported faults
+   */
+  hasFaults(): boolean {
+    return (this.data.countFaults || 0) > 0;
+  }
+
+  /**
+   * Get the number of reported faults
+   */
+  getFaultCount(): number {
+    return this.data.countFaults || 0;
+  }
+
+  /**
+   * Get display tags as a simple array of tag names
+   */
+  getTagNames(): string[] {
+    return this.data.tags?.map(tag => tag.tag || '').filter(Boolean) || [];
+  }
+
+  /**
+   * Check if display has a specific tag
+   */
+  hasTag(tagName: string): boolean {
+    return this.getTagNames().includes(tagName);
+  }
+
+  // Proxy all original properties from the generated interface
+  get displayId() { return this.data.displayId; }
+  get displayTypeId() { return this.data.displayTypeId; }
+  get venueId() { return this.data.venueId; }
+  get address() { return this.data.address; }
+  get isMobile() { return this.data.isMobile; }
+  get languages() { return this.data.languages; }
+  get displayType() { return this.data.displayType; }
+  get screenSize() { return this.data.screenSize; }
+  get isOutdoor() { return this.data.isOutdoor; }
+  get customId() { return this.data.customId; }
+  get costPerPlay() { return this.data.costPerPlay; }
+  get impressionsPerPlay() { return this.data.impressionsPerPlay; }
+  get ref1() { return this.data.ref1; }
+  get ref2() { return this.data.ref2; }
+  get ref3() { return this.data.ref3; }
+  get ref4() { return this.data.ref4; }
+  get ref5() { return this.data.ref5; }
+  get auditingUntil() { return this.data.auditingUntil; }
+  get display() { return this.data.display; }
+  get description() { return this.data.description; }
+  get defaultLayoutId() { return this.data.defaultLayoutId; }
+  get license() { return this.data.license; }
+  get licensed() { return this.data.licensed; }
+  get loggedIn() { return this.data.loggedIn; }
+  get lastAccessed() { return this.data.lastAccessed; }
+  get incSchedule() { return this.data.incSchedule; }
+  get emailAlert() { return this.data.emailAlert; }
+  get alertTimeout() { return this.data.alertTimeout; }
+  get clientAddress() { return this.data.clientAddress; }
+  get mediaInventoryStatus() { return this.data.mediaInventoryStatus; }
+  get macAddress() { return this.data.macAddress; }
+  get lastChanged() { return this.data.lastChanged; }
+  get numberOfMacAddressChanges() { return this.data.numberOfMacAddressChanges; }
+  get lastWakeOnLanCommandSent() { return this.data.lastWakeOnLanCommandSent; }
+  get wakeOnLanEnabled() { return this.data.wakeOnLanEnabled; }
+  get wakeOnLanTime() { return this.data.wakeOnLanTime; }
+  get broadCastAddress() { return this.data.broadCastAddress; }
+  get secureOn() { return this.data.secureOn; }
+  get cidr() { return this.data.cidr; }
+  get latitude() { return this.data.latitude; }
+  get longitude() { return this.data.longitude; }
+  get clientType() { return this.data.clientType; }
+  get clientVersion() { return this.data.clientVersion; }
+  get clientCode() { return this.data.clientCode; }
+  get displayProfileId() { return this.data.displayProfileId; }
+  get currentLayoutId() { return this.data.currentLayoutId; }
+  get screenShotRequested() { return this.data.screenShotRequested; }
+  get storageAvailableSpace() { return this.data.storageAvailableSpace; }
+  get storageTotalSpace() { return this.data.storageTotalSpace; }
+  get displayGroupId() { return this.data.displayGroupId; }
+  get currentLayout() { return this.data.currentLayout; }
+  get defaultLayout() { return this.data.defaultLayout; }
+  get displayGroups() { return this.data.displayGroups; }
+  get xmrChannel() { return this.data.xmrChannel; }
+  get xmrPubKey() { return this.data.xmrPubKey; }
+  get lastCommandSuccess() { return this.data.lastCommandSuccess; }
+  get deviceName() { return this.data.deviceName; }
+  get timeZone() { return this.data.timeZone; }
+  get tags() { return this.data.tags; }
+  get overrideConfig() { return this.data.overrideConfig; }
+  get bandwidthLimit() { return this.data.bandwidthLimit; }
+  get newCmsAddress() { return this.data.newCmsAddress; }
+  get newCmsKey() { return this.data.newCmsKey; }
+  get orientation() { return this.data.orientation; }
+  get resolution() { return this.data.resolution; }
+  get commercialLicence() { return this.data.commercialLicence; }
+  get teamViewerSerial() { return this.data.teamViewerSerial; }
+  get webkeySerial() { return this.data.webkeySerial; }
+  get groupsWithPermissions() { return this.data.groupsWithPermissions; }
+  get createdDt() { return this.data.createdDt; }
+  get modifiedDt() { return this.data.modifiedDt; }
+  get folderId() { return this.data.folderId; }
+  get permissionsFolderId() { return this.data.permissionsFolderId; }
+  get countFaults() { return this.data.countFaults; }
+  get lanIpAddress() { return this.data.lanIpAddress; }
+  get syncGroupId() { return this.data.syncGroupId; }
+  get osVersion() { return this.data.osVersion; }
+  get osSdk() { return this.data.osSdk; }
+  get manufacturer() { return this.data.manufacturer; }
+  get brand() { return this.data.brand; }
+  get model() { return this.data.model; }
+
+  /**
+   * Convert the enhanced model back to the raw data format
+   */
+  toJSON(): GeneratedDisplay {
+    return this.data;
+  }
+
+  /**
+   * Create a new Display instance from raw API data
+   */
+  static fromApiData(data: GeneratedDisplay): Display {
+    return new Display(data);
+  }
+
+  /**
+   * Validate and transform raw data using Zod schema
+   */
+  static validate(data: unknown): Display {
+    // First validate with Zod (this transforms dates)
+    const validatedData = DisplaySchema.parse(data);
+    
+    // Convert back to the expected format for the generated interface
+    const displayData = {
+      ...validatedData,
+      // Convert Date objects back to ISO strings for the generated interface
+      auditingUntil: validatedData.auditingUntil instanceof Date ? 
+        validatedData.auditingUntil.toISOString() : validatedData.auditingUntil,
+      lastAccessed: validatedData.lastAccessed instanceof Date ? 
+        validatedData.lastAccessed.toISOString() : validatedData.lastAccessed,
+      createdDt: validatedData.createdDt instanceof Date ? 
+        validatedData.createdDt.toISOString() : validatedData.createdDt,
+      modifiedDt: validatedData.modifiedDt instanceof Date ? 
+        validatedData.modifiedDt.toISOString() : validatedData.modifiedDt,
+    } as GeneratedDisplay;
+    
+    return new Display(displayData);
+  }
 }
 
-/**
- * Parameters for updating a display
- */
-export interface DisplayUpdateParams {
-  /** The Display Name */
-  display: string;
-  
-  /** A description of the Display */
-  description?: string;
-  
-  /** A comma separated list of tags for this item */
-  tags?: string;
-  
-  /** A date this Display records auditing information until. */
-  auditingUntil?: string;
-  
-  /** A Layout ID representing the Default Layout for this Display. */
-  defaultLayoutId: number;
-  
-  /** Flag indicating whether this display is licensed. */
-  licensed: number;
-  
-  /** The hardwareKey to use as the licence key for this Display */
-  license: string;
-  
-  /** Flag indicating whether the Default Layout should be included in the Schedule */
-  incSchedule: number;
-  
-  /** Flag indicating whether the Display generates up/down email alerts. */
-  emailAlert: number;
-  
-  /** How long in seconds should this display wait before alerting when it hasn't connected. Override for the collection interval. */
-  alertTimeout?: number;
-  
-  /** Flag indicating if Wake On LAN is enabled for this Display */
-  wakeOnLanEnabled: number;
-  
-  /** A h:i string representing the time that the Display should receive its Wake on LAN command */
-  wakeOnLanTime?: string;
-  
-  /** The BroadCast Address for this Display - used by Wake On LAN */
-  broadCastAddress?: string;
-  
-  /** The secure on configuration for this Display */
-  secureOn?: string;
-  
-  /** The CIDR configuration for this Display */
-  cidr?: number;
-  
-  /** The Latitude of this Display */
-  latitude?: number;
-  
-  /** The Longitude of this Display */
-  longitude?: number;
-  
-  /** The timezone for this display, or empty to use the CMS timezone */
-  timeZone?: string;
-  
-  /** An array of languages supported in this display location */
-  languages?: string;
-  
-  /** The Display Settings Profile ID */
-  displayProfileId?: number;
-  
-  /** The Display Type ID of this Display */
-  displayTypeId?: number;
-  
-  /** The screen size of this Display */
-  screenSize?: number;
-  
-  /** The Venue ID of this Display */
-  venueId?: number;
-  
-  /** The Location Address of this Display */
-  address?: string;
-  
-  /** Is this Display mobile? */
-  isMobile?: number;
-  
-  /** Is this Display Outdoor? */
-  isOutdoor?: number;
-  
-  /** The Cost Per Play of this Display */
-  costPerPlay?: number;
-  
-  /** The Impressions Per Play of this Display */
-  impressionsPerPlay?: number;
-  
-  /** The custom ID (an Id of any external system) of this Display */
-  customId?: string;
-  
-  /** Reference 1 */
-  ref1?: string;
-  
-  /** Reference 2 */
-  ref2?: string;
-  
-  /** Reference 3 */
-  ref3?: string;
-  
-  /** Reference 4 */
-  ref4?: string;
-  
-  /** Reference 5 */
-  ref5?: string;
-  
-  /** Clear all Cached data for this display */
-  clearCachedData?: number;
-  
-  /** Clear the cached XMR configuration and send a rekey */
-  rekeyXmr?: number;
-  
-  /** The TeamViewer serial number for this Display, if applicable */
-  teamViewerSerial?: string;
-  
-  /** The Webkey serial number for this Display, if applicable */
-  webkeySerial?: string;
-  
-  /** Folder ID to which this object should be assigned to */
-  folderId?: number;
-}
+// Re-export the generated search params interface for convenience
+export type DisplaySearchParams = GeneratedDisplaySearchParams;
+
+// Export the generated Display interface for type compatibility
+export type { GeneratedDisplay as DisplayData };

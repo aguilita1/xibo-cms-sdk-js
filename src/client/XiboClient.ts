@@ -1,3 +1,7 @@
+/**
+ * Xibo Client - the main SDK client for interacting with the Xibo CMS API.
+ * Location: src\client\XiboClient.ts
+ */
 import { HttpClient, HttpClientConfig } from './HttpClient';
 import { OAuth2Manager, TokenStorage, MemoryTokenStorage } from '../auth';
 import { XiboConfig, Logger, Context } from '../types';

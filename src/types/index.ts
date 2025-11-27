@@ -1,5 +1,6 @@
 /**
  * Core types and interfaces for the Xibo CMS SDK
+ * Location: src\types\index.ts
  */
 
 /// <reference lib="dom" />

@@ -15,10 +15,13 @@
     "format": "prettier --write src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
     "docs": "typedoc src/index.ts",
-    "prepublishOnly": "npm run build && npm run test && npm run lint",
+    "prepublishOnly": "npm run generate && npm run build && npm run test && npm run lint",
     "clean": "rimraf dist",
     "example:js": "npm run build && node examples/basic-usage.js",
-    "example:ts": "npm run build && npx ts-node examples/basic-usage.ts"
+    "example:ts": "npm run build && npx ts-node examples/basic-usage.ts",
+    "generate:types": "node scripts/generate-types.js",
+    "postgenerate:types": "node scripts/post-process-types.js",
+    "generate": "npm run generate:types && npm run postgenerate:types"
   },
   "keywords": [
     "xibo",
@@ -66,10 +69,12 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "jest": "^29.7.0",
+    "openapi-typescript": "^7.10.1",
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
     "typedoc": "^0.25.4",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "zod": "^4.1.13"
   }
 }

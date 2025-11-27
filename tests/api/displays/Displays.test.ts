@@ -1,6 +1,12 @@
+
+/**
+ * Unit tests for Xibo CMS API client that manages displays.
+ * Location: tests\api\displays\Displays.test.ts
+ */
 import { Displays } from '../../../src/api/displays/Displays';
 import { HttpClient } from '../../../src/client/HttpClient';
-import { Display, DisplaySearchParams, DisplayUpdateParams } from '../../../src/models/Display';
+import { Display, DisplaySearchParams } from '../../../src/models/Display';
+import { Display as GeneratedDisplay } from '../../../src/generated/types/swagger-types';
 import { Context } from '../../../src/types';
 import { NotFoundError, AuthenticationError, ValidationError } from '../../../src/errors';
 
@@ -11,20 +17,20 @@ describe('Displays', () => {
   let displays: Displays;
   let mockHttpClient: jest.Mocked<HttpClient>;
 
-  // Sample display data for testing
-  const sampleDisplay: Display = {
+  // Sample raw display data for testing (matches generated types)
+  const sampleRawDisplay: GeneratedDisplay = {
     displayId: 1,
     display: 'Test Display',
     description: 'Test Display Description',
     tags: [],
-    auditingUntil: 1735689599, // Unix timestamp for 2024-12-31 23:59:59
+    auditingUntil: '2024-12-31T23:59:59.000Z', // ISO date string (transformed from Unix timestamp)
     defaultLayoutId: 1,
-    licensed: 1,
+    licensed: true, // Transformed from 0/1 integer flag
     license: 'test-license-key',
-    incSchedule: 1,
-    emailAlert: 1,
+    incSchedule: true, // Transformed from 0/1 integer flag
+    emailAlert: true, // Transformed from 0/1 integer flag
     alertTimeout: 300,
-    wakeOnLanEnabled: 0,
+    wakeOnLanEnabled: false, // Transformed from 0/1 integer flag
     wakeOnLanTime: '',
     broadCastAddress: '',
     secureOn: '',
@@ -38,8 +44,8 @@ describe('Displays', () => {
     screenSize: 55,
     venueId: 1,
     address: '',
-    isMobile: 0,
-    isOutdoor: 0,
+    isMobile: false, // Transformed from 0/1 integer flag
+    isOutdoor: false, // Transformed from 0/1 integer flag
     costPerPlay: 0.50,
     impressionsPerPlay: 1000,
     customId: '',
@@ -51,8 +57,8 @@ describe('Displays', () => {
     teamViewerSerial: '',
     webkeySerial: '',
     folderId: 1,
-    loggedIn: 1,
-    lastAccessed: 1704110400, // Unix timestamp for 2024-01-01 12:00:00
+    loggedIn: true, // Transformed from 0/1 integer flag
+    lastAccessed: '2024-01-01T12:00:00.000Z', // ISO date string (transformed from Unix timestamp)
     macAddress: '00:11:22:33:44:55',
     clientVersion: '3.0.0',
     clientType: 'android',
@@ -70,7 +76,6 @@ describe('Displays', () => {
     storageAvailableSpace: 1000000,
     storageTotalSpace: 2000000
   };
-
 
   beforeEach(() => {
     // Create a mock HttpClient with all required methods
@@ -98,7 +103,7 @@ describe('Displays', () => {
   describe('search', () => {
     it('should search displays with default parameters', async () => {
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -107,21 +112,23 @@ describe('Displays', () => {
       const result = await displays.search();
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {}, undefined);
-      expect(result.data).toEqual([sampleDisplay]);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toBeInstanceOf(Display);
+      expect(result.data[0]?.displayId).toBe(1);
+      expect(result.data[0]?.display).toBe('Test Display');
       expect(result.total).toBe(1);
     });
 
     it('should search displays with search parameters', async () => {
       const searchParams: DisplaySearchParams = {
-        displayId: 1,
         display: 'Test',
         tags: 'tag1,tag2',
-        authorised: 1,
-        loggedIn: 1
+        authorised: true, // boolean, not number
+        loggedIn: true // boolean, not number
       };
 
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -130,13 +137,13 @@ describe('Displays', () => {
       const result = await displays.search(searchParams);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {
-        displayId: '1',
         display: 'Test',
         tags: 'tag1,tag2',
-        authorised: '1',
-        loggedIn: '1'
+        authorised: 'true',
+        loggedIn: 'true'
       }, undefined);
-      expect(result.data).toEqual([sampleDisplay]);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toBeInstanceOf(Display);
     });
 
     it('should search displays with context', async () => {
@@ -146,7 +153,7 @@ describe('Displays', () => {
       };
 
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -155,7 +162,8 @@ describe('Displays', () => {
       const result = await displays.search({}, context);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {}, context);
-      expect(result.data).toEqual([sampleDisplay]);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toBeInstanceOf(Display);
     });
 
     it('should handle search errors', async () => {
@@ -169,7 +177,7 @@ describe('Displays', () => {
   describe('get', () => {
     it('should get a display by ID', async () => {
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -177,7 +185,10 @@ describe('Displays', () => {
 
       const result = await displays.get(1);
 
-      expect(result).toEqual(sampleDisplay);
+      expect(result).toBeInstanceOf(Display);
+      expect(result.displayId).toBe(1);
+      expect(result.display).toBe('Test Display');
+      expect(result.isLicensed).toBe(true); // Enhanced model method
     });
 
     it('should get a display with context', async () => {
@@ -186,7 +197,7 @@ describe('Displays', () => {
       };
 
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -194,7 +205,8 @@ describe('Displays', () => {
 
       const result = await displays.get(1, context);
 
-      expect(result).toEqual(sampleDisplay);
+      expect(result).toBeInstanceOf(Display);
+      expect(result.displayId).toBe(1);
     });
 
     it('should handle not found error', async () => {
@@ -211,20 +223,20 @@ describe('Displays', () => {
 
   describe('update', () => {
     it('should update a display', async () => {
-      const updateData: DisplayUpdateParams = {
+      const updateData: Partial<GeneratedDisplay> = {
         display: 'Updated Display Name',
         description: 'Updated description',
         defaultLayoutId: 1,
-        licensed: 1,
+        licensed: true, // boolean, not number
         license: 'updated-license',
-        incSchedule: 1,
-        emailAlert: 1,
-        wakeOnLanEnabled: 0
+        incSchedule: true, // boolean, not number
+        emailAlert: true, // boolean, not number
+        wakeOnLanEnabled: false // boolean, not number
       };
 
-      const updatedDisplay = { ...sampleDisplay, ...updateData };
+      const updatedRawDisplay = { ...sampleRawDisplay, ...updateData };
       mockHttpClient.put.mockResolvedValue({
-        data: updatedDisplay,
+        data: updatedRawDisplay,
         status: 200,
         headers: {},
         config: { method: 'PUT', url: '/display/1' } as any
@@ -233,25 +245,27 @@ describe('Displays', () => {
       const result = await displays.update(1, updateData);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/1', updateData, undefined);
-      expect(result).toEqual(updatedDisplay);
+      expect(result).toBeInstanceOf(Display);
+      expect(result.display).toBe('Updated Display Name');
+      expect(result.isLicensed).toBe(true);
     });
 
     it('should update a display with context', async () => {
-      const updateData: DisplayUpdateParams = {
+      const updateData: Partial<GeneratedDisplay> = {
         display: 'Updated Display Name',
         defaultLayoutId: 1,
-        licensed: 1,
+        licensed: true, // boolean, not number
         license: 'test-license',
-        incSchedule: 1,
-        emailAlert: 1,
-        wakeOnLanEnabled: 0
+        incSchedule: true, // boolean, not number
+        emailAlert: true, // boolean, not number
+        wakeOnLanEnabled: false // boolean, not number
       };
       const context: Context = {
         timeout: 10000
       };
 
       mockHttpClient.put.mockResolvedValue({
-        data: sampleDisplay,
+        data: sampleRawDisplay,
         status: 200,
         headers: {},
         config: { method: 'PUT', url: '/display/1' } as any
@@ -260,18 +274,18 @@ describe('Displays', () => {
       const result = await displays.update(1, updateData, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/1', updateData, context);
-      expect(result).toEqual(sampleDisplay);
+      expect(result).toBeInstanceOf(Display);
     });
 
     it('should handle validation errors', async () => {
-      const updateData: DisplayUpdateParams = {
+      const updateData: Partial<GeneratedDisplay> = {
         display: 'Test',
         defaultLayoutId: 1,
-        licensed: 1,
+        licensed: true, // boolean, not number
         license: 'test-license',
-        incSchedule: 1,
-        emailAlert: 1,
-        wakeOnLanEnabled: 0
+        incSchedule: true, // boolean, not number
+        emailAlert: true, // boolean, not number
+        wakeOnLanEnabled: false // boolean, not number
       };
       const error = new ValidationError('Display name is required');
       mockHttpClient.put.mockRejectedValue(error);
@@ -322,7 +336,7 @@ describe('Displays', () => {
   describe('requestScreenshot', () => {
     it('should request a screenshot', async () => {
       mockHttpClient.put.mockResolvedValue({
-        data: sampleDisplay,
+        data: sampleRawDisplay,
         status: 200,
         headers: {},
         config: { method: 'PUT', url: '/display/requestscreenshot/1' } as any
@@ -331,7 +345,7 @@ describe('Displays', () => {
       const result = await displays.requestScreenshot(1);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/requestscreenshot/1', {}, undefined);
-      expect(result).toEqual(sampleDisplay);
+      expect(result).toBeInstanceOf(Display);
     });
 
     it('should request a screenshot with context', async () => {
@@ -340,7 +354,7 @@ describe('Displays', () => {
       };
 
       mockHttpClient.put.mockResolvedValue({
-        data: sampleDisplay,
+        data: sampleRawDisplay,
         status: 200,
         headers: {},
         config: { method: 'PUT', url: '/display/requestscreenshot/1' } as any
@@ -349,7 +363,7 @@ describe('Displays', () => {
       const result = await displays.requestScreenshot(1, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/requestscreenshot/1', {}, context);
-      expect(result).toEqual(sampleDisplay);
+      expect(result).toBeInstanceOf(Display);
     });
   });
 
@@ -622,14 +636,14 @@ describe('Displays', () => {
     });
 
     it('should handle validation errors', async () => {
-      const updateData: DisplayUpdateParams = {
+      const updateData: Partial<GeneratedDisplay> = {
         display: 'Test',
         defaultLayoutId: 1,
-        licensed: 1,
+        licensed: true, // boolean, not number
         license: 'test-license',
-        incSchedule: 1,
-        emailAlert: 1,
-        wakeOnLanEnabled: 0
+        incSchedule: true, // boolean, not number
+        emailAlert: true, // boolean, not number
+        wakeOnLanEnabled: false // boolean, not number
       };
       const error = new ValidationError('Invalid input');
       mockHttpClient.put.mockRejectedValue(error);
@@ -641,7 +655,7 @@ describe('Displays', () => {
   describe('parameter validation', () => {
     it('should handle numeric displayId parameters', async () => {
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any
@@ -649,7 +663,7 @@ describe('Displays', () => {
 
       await displays.get(123);
 
-      expect(mockHttpClient.get).toHaveBeenCalledWith('/display', { displayId: '123' }, undefined);
+      expect(mockHttpClient.get).toHaveBeenCalledWith('/display', { display: '123' }, undefined);
     });
 
     it('should handle string parameters with special characters', async () => {
@@ -659,7 +673,7 @@ describe('Displays', () => {
       };
 
       mockHttpClient.get.mockResolvedValue({
-        data: [sampleDisplay],
+        data: [sampleRawDisplay],
         status: 200,
         headers: { 'x-total-count': '1' },
         config: { method: 'GET', url: '/display' } as any

@@ -2,6 +2,7 @@ import { XiboError } from './XiboError';
 
 /**
  * Error thrown when authentication fails (HTTP 401)
+ * Location: src\errors\AuthenticationError.ts
  */
 export class AuthenticationError extends XiboError {
   constructor(message: string = 'Authentication failed', details?: unknown) {

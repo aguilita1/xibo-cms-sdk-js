@@ -125,6 +125,12 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
+# Editor directories and files
+.vscode/
+
+# Generated API code
+src/generated/
+
 # yarn v3
 .pnp.*
 .yarn/*

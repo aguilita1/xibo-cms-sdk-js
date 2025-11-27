@@ -1,4 +1,9 @@
+/**
+ * HTTP Client - Axios wrapper that provides a type-safe, authenticated HTTP client for the Xibo CMS API
+ * Location: src\client\HttpClient.ts
+ */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import type { AxiosRequestHeaders } from 'axios';
 import { OAuth2Manager } from '../auth';
 import { 
   RequestConfig, 
@@ -61,7 +66,9 @@ export class HttpClient {
       async (config) => {
         try {
           const token = await this.oauth2Manager.refreshTokenIfNeeded();
-          config.headers = config.headers || {};
+          if (!config.headers) {
+            config.headers = {} as AxiosRequestHeaders;
+          }
           config.headers['Authorization'] = `Bearer ${token}`;
           
           this.logger?.debug('HTTP request', {

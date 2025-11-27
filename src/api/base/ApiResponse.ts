@@ -1,4 +1,9 @@
 /**
+ * API response types and helper functions
+ * Location: src\api\base\ApiResponse.ts
+ */
+
+/**
  * Standard API response wrapper
  */
 export interface ApiResponse<T> {

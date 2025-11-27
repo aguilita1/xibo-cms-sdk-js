@@ -1,5 +1,6 @@
 /**
  * Xibo CMS SDK for Node.js
+ * Location: src\index.ts
  * 
  * A comprehensive Node.js library for the Xibo CMS API with OAuth2 authentication,
  * automatic retry logic, rate limiting support, and extensive error handling.

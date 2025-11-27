@@ -1,3 +1,7 @@
+/**
+ * Base class for all API endpoints
+ * Location: src\api\base\BaseApi.ts
+ */
 import { HttpClient } from '../../client/HttpClient';
 
 /**

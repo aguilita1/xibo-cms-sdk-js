@@ -1,3 +1,7 @@
+/**
+ * Rate Limit Error - Error thrown when rate limit is exceeded (HTTP 429)
+ * Location: src\errors\RateLimitError.ts
+ */
 import { XiboError } from './XiboError';
 
 /**

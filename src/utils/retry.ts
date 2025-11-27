@@ -1,3 +1,7 @@
+/**
+ * Retry logic for the Xibo CMS SDK
+ * Location: src\utils\retry.ts
+ */
 import { Logger } from '../types';
 import { RateLimitError } from '../errors';
 

@@ -1,6 +1,11 @@
+/**
+ * Xibo CMS API client for managing displays.
+ * Location: src\api\displays\Displays.ts
+ */
 import { BaseApi } from '../base/BaseApi';
 import { PaginatedResponse, createPaginatedResponse } from '../base/ApiResponse';
-import { Display, DisplaySearchParams, DisplayUpdateParams } from '../../models/Display';
+import { Display, DisplaySearchParams } from '../../models/Display';
+import { Display as GeneratedDisplay } from '../../generated/types/swagger-types';
 import { Context } from '../../types';
 import { NotFoundError } from '../../errors';
 
@@ -20,20 +25,24 @@ export class Displays extends BaseApi {
       searchParams[key] = value;
     });
     
-    const response = await this.httpClient.get<Display[]>('/display', searchParams, context);
+    const response = await this.httpClient.get<GeneratedDisplay[]>('/display', searchParams, context);
+    
+    // Transform raw API response to enhanced models
+    const displays = response.data.map(raw => Display.fromApiData(raw));
     
     // Extract total count from headers if available
     const totalHeader = response.headers['x-total-count'];
     const total = totalHeader ? parseInt(totalHeader, 10) : undefined;
     
-    return createPaginatedResponse(response.data, total);
+    return createPaginatedResponse(displays, total);
   }
 
   /**
    * Get a specific display by ID
    */
   async get(displayId: number, context?: Context): Promise<Display> {
-    const displays = await this.search({ displayId }, context);
+    // Use the display parameter instead of displayId for search
+    const displays = await this.search({ display: displayId.toString() }, context);
     
     if (displays.data.length === 0) {
       throw new NotFoundError(`Display with ID ${displayId} not found`);
@@ -50,9 +59,9 @@ export class Displays extends BaseApi {
   /**
    * Update a display
    */
-  async update(displayId: number, data: DisplayUpdateParams, context?: Context): Promise<Display> {
-    const response = await this.httpClient.put<Display>(`/display/${displayId}`, data, context);
-    return response.data;
+  async update(displayId: number, data: Partial<GeneratedDisplay>, context?: Context): Promise<Display> {
+    const response = await this.httpClient.put<GeneratedDisplay>(`/display/${displayId}`, data, context);
+    return Display.fromApiData(response.data);
   }
 
   /**
@@ -66,8 +75,8 @@ export class Displays extends BaseApi {
    * Request a screenshot from a display
    */
   async requestScreenshot(displayId: number, context?: Context): Promise<Display> {
-    const response = await this.httpClient.put<Display>(`/display/requestscreenshot/${displayId}`, {}, context);
-    return response.data;
+    const response = await this.httpClient.put<GeneratedDisplay>(`/display/requestscreenshot/${displayId}`, {}, context);
+    return Display.fromApiData(response.data);
   }
 
   /**

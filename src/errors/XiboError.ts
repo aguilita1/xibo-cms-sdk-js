@@ -1,5 +1,6 @@
 /**
  * Base error class for all Xibo SDK errors
+ * Location: src\errors\XiboError.ts
  */
 export class XiboError extends Error {
   public readonly code?: string | number | undefined;

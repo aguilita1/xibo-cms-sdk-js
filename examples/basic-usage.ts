@@ -1,5 +1,6 @@
 /**
  * Basic usage example for Xibo CMS SDK (TypeScript)
+ * Location: examples\basic-usage.ts
  * 
  * Before running this example:
  * 1. Copy .env.example to .env
@@ -26,13 +27,13 @@ async function main(): Promise<void> {
 
   // Create a new Xibo client instance using environment variables
   const config: XiboConfig = {
-    baseUrl: process.env.XIBO_BASE_URL!,
-    clientId: process.env.XIBO_CLIENT_ID!,
-    clientSecret: process.env.XIBO_CLIENT_SECRET!,
+    baseUrl: process.env["XIBO_BASE_URL"]!,
+    clientId: process.env["XIBO_CLIENT_ID"]!,
+    clientSecret: process.env["XIBO_CLIENT_SECRET"]!,
     grantType: 'client_credentials',
-    tokenEndpoint: process.env.XIBO_TOKEN_URL,
-    authorizeEndpoint: process.env.XIBO_AUTH_URL,
-    logLevel: (process.env.XIBO_LOG_LEVEL as any) || 'info',
+    ...(process.env["XIBO_TOKEN_URL"] && { tokenEndpoint: process.env["XIBO_TOKEN_URL"] }),
+    ...(process.env["XIBO_AUTH_URL"] && { authorizeEndpoint: process.env["XIBO_AUTH_URL"] }),
+    logLevel: (process.env["XIBO_LOG_LEVEL"] as any) || 'info',
     timeout: 30000,
     maxRetries: 3,
   };
@@ -40,7 +41,7 @@ async function main(): Promise<void> {
   const client = new XiboClient(config);
 
   console.log('🚀 Xibo CMS SDK TypeScript Example');
-  console.log('Base URL:', process.env.XIBO_BASE_URL);
+  console.log('Base URL:', process.env["XIBO_BASE_URL"]);
   console.log('Grant Type: client_credentials');
 
   try {
