@@ -31,6 +31,9 @@ xibo-cms-sdk-js/
 │   │   ├── resolutions/
 │   │   ├── library/
 │   │   ├── displays/
+│   │   │   ├── Displays.ts
+│   │   │   ├── Displays.types.ts # Optional
+│   │   │   └── index.ts
 │   │   ├── displayGroups/
 │   │   ├── displayProfiles/
 │   │   ├── datasets/
@@ -269,7 +272,9 @@ Workflow stages:
 - [ ] Schedules + unit tests
 - [ ] Campaigns + unit tests
 - [ ] Widgets   + unit tests
-- [ ] Basic models and types from Swagger specification
+- [ ] Basic models and types from Swagger specification; 
+  - types = internal or shared SDK types 
+  - models = API response payloads
 
 ### Phase 3: Extended API endpoints (Week 3)
 - [ ] Notifications + unit tests
