@@ -18,7 +18,6 @@ export const DisplaySchema = z.object({
   incSchedule: z.boolean().optional(),
   emailAlert: z.boolean().optional(),
   wakeOnLanEnabled: z.boolean().optional(),
-  retired: z.boolean().optional(),
   createdDt: z.string().transform(str => str ? new Date(str) : undefined).optional(),
   modifiedDt: z.string().transform(str => str ? new Date(str) : undefined).optional(),
   // Add other fields as needed with appropriate transformations
