@@ -1,4 +1,4 @@
-import { DisplaysApi } from '../../../src/api/displays/DisplaysApi';
+import { Displays } from '../../../src/api/displays/Displays';
 import { HttpClient } from '../../../src/client/HttpClient';
 import { Display, DisplaySearchParams, DisplayUpdateParams } from '../../../src/models/Display';
 import { Context } from '../../../src/types';
@@ -7,8 +7,8 @@ import { NotFoundError, AuthenticationError, ValidationError } from '../../../sr
 // Mock the HttpClient
 jest.mock('../../../src/client/HttpClient');
 
-describe('DisplaysApi', () => {
-  let displaysApi: DisplaysApi;
+describe('Displays', () => {
+  let displays: Displays;
   let mockHttpClient: jest.Mocked<HttpClient>;
 
   // Sample display data for testing
@@ -88,7 +88,7 @@ describe('DisplaysApi', () => {
       normalizeHeaders: jest.fn(),
     } as unknown as jest.Mocked<HttpClient>;
 
-    displaysApi = new DisplaysApi(mockHttpClient);
+    displays = new Displays(mockHttpClient);
   });
 
   afterEach(() => {
@@ -104,7 +104,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      const result = await displaysApi.search();
+      const result = await displays.search();
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {}, undefined);
       expect(result.data).toEqual([sampleDisplay]);
@@ -127,7 +127,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      const result = await displaysApi.search(searchParams);
+      const result = await displays.search(searchParams);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {
         displayId: '1',
@@ -152,7 +152,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      const result = await displaysApi.search({}, context);
+      const result = await displays.search({}, context);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {}, context);
       expect(result.data).toEqual([sampleDisplay]);
@@ -162,7 +162,7 @@ describe('DisplaysApi', () => {
       const error = new AuthenticationError('Unauthorized');
       mockHttpClient.get.mockRejectedValue(error);
 
-      await expect(displaysApi.search()).rejects.toThrow(AuthenticationError);
+      await expect(displays.search()).rejects.toThrow(AuthenticationError);
     });
   });
 
@@ -175,7 +175,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      const result = await displaysApi.get(1);
+      const result = await displays.get(1);
 
       expect(result).toEqual(sampleDisplay);
     });
@@ -192,7 +192,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      const result = await displaysApi.get(1, context);
+      const result = await displays.get(1, context);
 
       expect(result).toEqual(sampleDisplay);
     });
@@ -205,7 +205,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      await expect(displaysApi.get(999)).rejects.toThrow(NotFoundError);
+      await expect(displays.get(999)).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -230,7 +230,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/1' } as any
       });
 
-      const result = await displaysApi.update(1, updateData);
+      const result = await displays.update(1, updateData);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/1', updateData, undefined);
       expect(result).toEqual(updatedDisplay);
@@ -257,7 +257,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/1' } as any
       });
 
-      const result = await displaysApi.update(1, updateData, context);
+      const result = await displays.update(1, updateData, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/1', updateData, context);
       expect(result).toEqual(sampleDisplay);
@@ -276,7 +276,7 @@ describe('DisplaysApi', () => {
       const error = new ValidationError('Display name is required');
       mockHttpClient.put.mockRejectedValue(error);
 
-      await expect(displaysApi.update(1, updateData)).rejects.toThrow(ValidationError);
+      await expect(displays.update(1, updateData)).rejects.toThrow(ValidationError);
     });
   });
 
@@ -289,7 +289,7 @@ describe('DisplaysApi', () => {
         config: { method: 'DELETE', url: '/display/1' } as any
       });
 
-      await displaysApi.delete(1);
+      await displays.delete(1);
 
       expect(mockHttpClient.delete).toHaveBeenCalledWith('/display/1', undefined);
     });
@@ -306,7 +306,7 @@ describe('DisplaysApi', () => {
         config: { method: 'DELETE', url: '/display/1' } as any
       });
 
-      await displaysApi.delete(1, context);
+      await displays.delete(1, context);
 
       expect(mockHttpClient.delete).toHaveBeenCalledWith('/display/1', context);
     });
@@ -315,7 +315,7 @@ describe('DisplaysApi', () => {
       const error = new NotFoundError('Display not found');
       mockHttpClient.delete.mockRejectedValue(error);
 
-      await expect(displaysApi.delete(999)).rejects.toThrow(NotFoundError);
+      await expect(displays.delete(999)).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -328,7 +328,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/requestscreenshot/1' } as any
       });
 
-      const result = await displaysApi.requestScreenshot(1);
+      const result = await displays.requestScreenshot(1);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/requestscreenshot/1', {}, undefined);
       expect(result).toEqual(sampleDisplay);
@@ -346,7 +346,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/requestscreenshot/1' } as any
       });
 
-      const result = await displaysApi.requestScreenshot(1, context);
+      const result = await displays.requestScreenshot(1, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/requestscreenshot/1', {}, context);
       expect(result).toEqual(sampleDisplay);
@@ -362,7 +362,7 @@ describe('DisplaysApi', () => {
         config: { method: 'POST', url: '/display/wol/1' } as any
       });
 
-      await displaysApi.wakeOnLan(1);
+      await displays.wakeOnLan(1);
 
       expect(mockHttpClient.post).toHaveBeenCalledWith('/display/wol/1', {}, undefined);
     });
@@ -379,7 +379,7 @@ describe('DisplaysApi', () => {
         config: { method: 'POST', url: '/display/wol/1' } as any
       });
 
-      await displaysApi.wakeOnLan(1, context);
+      await displays.wakeOnLan(1, context);
 
       expect(mockHttpClient.post).toHaveBeenCalledWith('/display/wol/1', {}, context);
     });
@@ -394,7 +394,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/authorise/1' } as any
       });
 
-      await displaysApi.toggleAuthorize(1);
+      await displays.toggleAuthorize(1);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/authorise/1', {}, undefined);
     });
@@ -411,7 +411,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/authorise/1' } as any
       });
 
-      await displaysApi.toggleAuthorize(1, context);
+      await displays.toggleAuthorize(1, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/authorise/1', {}, context);
     });
@@ -426,7 +426,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/defaultlayout/1' } as any
       });
 
-      await displaysApi.setDefaultLayout(1, 5);
+      await displays.setDefaultLayout(1, 5);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/defaultlayout/1', { layoutId: 5 }, undefined);
     });
@@ -443,7 +443,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/defaultlayout/1' } as any
       });
 
-      await displaysApi.setDefaultLayout(1, 5, context);
+      await displays.setDefaultLayout(1, 5, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/defaultlayout/1', { layoutId: 5 }, context);
     });
@@ -458,7 +458,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/licenceCheck/1' } as any 
       });
 
-      await displaysApi.licenseCheck(1);
+      await displays.licenseCheck(1);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/licenceCheck/1', {}, undefined);
     });
@@ -475,7 +475,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/licenceCheck/1' } as any 
       });
 
-      await displaysApi.licenseCheck(1, context);
+      await displays.licenseCheck(1, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/licenceCheck/1', {}, context);
     });
@@ -491,7 +491,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display/status/1' } as any
       });
 
-      const result = await displaysApi.getStatus(1);
+      const result = await displays.getStatus(1);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display/status/1', undefined, undefined);
       expect(result).toEqual(statusData);
@@ -510,7 +510,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display/status/1' } as any
       });
 
-      const result = await displaysApi.getStatus(1, context);
+      const result = await displays.getStatus(1, context);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display/status/1', undefined, context);
       expect(result).toEqual(statusData);
@@ -526,7 +526,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/purgeAll/1' } as any
       });
 
-      await displaysApi.purgeAll(1);
+      await displays.purgeAll(1);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/purgeAll/1', {}, undefined);
     });
@@ -543,7 +543,7 @@ describe('DisplaysApi', () => {
         config: { method: 'PUT', url: '/display/purgeAll/1' } as any
       });
 
-      await displaysApi.purgeAll(1, context);
+      await displays.purgeAll(1, context);
 
       expect(mockHttpClient.put).toHaveBeenCalledWith('/display/purgeAll/1', {}, context);
     });
@@ -563,7 +563,7 @@ describe('DisplaysApi', () => {
       };
 
       // Access the protected method through type assertion
-      const queryParams = (displaysApi as any).buildQueryParams(params);
+      const queryParams = (displays as any).buildQueryParams(params);
 
       expect(queryParams.get('displayId')).toBe('1');
       expect(queryParams.get('display')).toBe('Test Display');
@@ -576,14 +576,14 @@ describe('DisplaysApi', () => {
     });
 
     it('should handle empty parameters object', () => {
-      const queryParams = (displaysApi as any).buildQueryParams({});
+      const queryParams = (displays as any).buildQueryParams({});
       expect(queryParams.toString()).toBe('');
     });
   });
 
   describe('buildUrl', () => {
     it('should build URL without parameters', () => {
-      const url = (displaysApi as any).buildUrl('/display');
+      const url = (displays as any).buildUrl('/display');
       expect(url).toBe('/display');
     });
 
@@ -592,7 +592,7 @@ describe('DisplaysApi', () => {
         displayId: 1,
         display: 'Test'
       };
-      const url = (displaysApi as any).buildUrl('/display', params);
+      const url = (displays as any).buildUrl('/display', params);
       expect(url).toBe('/display?displayId=1&display=Test');
     });
 
@@ -601,7 +601,7 @@ describe('DisplaysApi', () => {
         display: 'Test Display',
         tags: 'tag1,tag2'
       };
-      const url = (displaysApi as any).buildUrl('/display', params);
+      const url = (displays as any).buildUrl('/display', params);
       expect(url).toBe('/display?display=Test+Display&tags=tag1%2Ctag2');
     });
   });
@@ -611,14 +611,14 @@ describe('DisplaysApi', () => {
       const error = new Error('Network error');
       mockHttpClient.get.mockRejectedValue(error);
 
-      await expect(displaysApi.search()).rejects.toThrow('Network error');
+      await expect(displays.search()).rejects.toThrow('Network error');
     });
 
     it('should handle authentication errors', async () => {
       const error = new AuthenticationError('Invalid credentials');
       mockHttpClient.get.mockRejectedValue(error);
 
-      await expect(displaysApi.get(1)).rejects.toThrow(AuthenticationError);
+      await expect(displays.get(1)).rejects.toThrow(AuthenticationError);
     });
 
     it('should handle validation errors', async () => {
@@ -634,7 +634,7 @@ describe('DisplaysApi', () => {
       const error = new ValidationError('Invalid input');
       mockHttpClient.put.mockRejectedValue(error);
 
-      await expect(displaysApi.update(1, updateData)).rejects.toThrow(ValidationError);
+      await expect(displays.update(1, updateData)).rejects.toThrow(ValidationError);
     });
   });
 
@@ -647,7 +647,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      await displaysApi.get(123);
+      await displays.get(123);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', { displayId: '123' }, undefined);
     });
@@ -665,7 +665,7 @@ describe('DisplaysApi', () => {
         config: { method: 'GET', url: '/display' } as any
       });
 
-      await displaysApi.search(searchParams);
+      await displays.search(searchParams);
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/display', {
         display: 'Test & Display',

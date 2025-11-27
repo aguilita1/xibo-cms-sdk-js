@@ -57,7 +57,7 @@ Comprehensive example demonstrating the Displays API functionality including sea
 
 **Run:**
 ```bash
-npx ts-node examples/displays-api.ts
+npx ts-node examples/displays.ts
 ```
 
 **Features demonstrated:**

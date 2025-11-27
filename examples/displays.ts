@@ -11,7 +11,7 @@
  * 1. Copy .env.example to .env
  * 2. Update the values in .env with your Xibo CMS credentials
  * 3. Run: npm run build
- * 4. Run: npx ts-node examples/displays-api.ts
+ * 4. Run: npx ts-node examples/displays.ts
  */
 
 // Load environment variables from .env file

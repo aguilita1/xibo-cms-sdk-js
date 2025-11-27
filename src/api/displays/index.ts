@@ -1,1 +1,1 @@
-export { DisplaysApi } from './DisplaysApi';
+export { Displays as Displays } from './Displays';

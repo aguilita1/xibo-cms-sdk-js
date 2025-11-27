@@ -7,7 +7,7 @@ import { NotFoundError } from '../../errors';
 /**
  * API class for managing Xibo Displays
  */
-export class DisplaysApi extends BaseApi {
+export class Displays extends BaseApi {
   /**
    * Search for displays
    */

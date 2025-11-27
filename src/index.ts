@@ -84,7 +84,7 @@ export type { RetryOptions } from './utils';
 export * from './models';
 
 // API classes
-export { DisplaysApi } from './api/displays';
+export { Displays } from './api/displays';
 export { BaseApi } from './api/base';
 
 // Default export
