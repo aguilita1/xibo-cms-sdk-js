@@ -89,16 +89,122 @@ xibo-cms-sdk-js/
 └── README.md
 ```
 ### 1.1 Responsibilities of post-processing script `post-process-types.js`
-- Strip unsupported Swagger extensions if present.
-- Fix nullable/optional fields if the generator misses them.
-- Convert Swagger-style enums into TypeScript enums or unions.
-- Extract JSDoc comments or metadata for documentation.
-- (Optional) Split the large generated file into smaller chunks (but only if needed).
+- **Swagger 2.0 Specific Transformations**:
+  - Convert integer timestamps (Unix epoch) to Date-compatible string types
+  - Transform 0/1 integer flags to boolean types where semantically appropriate
+  - Handle Swagger 2.0 `formData` parameters and convert to TypeScript interfaces
+  - Fix array types that may be incorrectly generated from Swagger 2.0 syntax
+- **Type Enhancement**:
+  - Strip unsupported Swagger extensions if present
+  - Fix nullable/optional fields if the generator misses them
+  - Convert Swagger-style enums into TypeScript enums or unions
+  - Add JSDoc comments from Swagger descriptions for better IntelliSense
+  - Ensure consistent naming conventions (camelCase for properties)
+- **Quality Assurance**:
+  - Validate generated types don't have circular references
+  - Ensure all required fields are properly marked as non-optional
+  - Add type guards for discriminated unions where applicable
+  - (Optional) Split the large generated file into smaller chunks if performance becomes an issue
+- **Documentation Integration**:
+  - Extract operation IDs and map them to method names for API classes
+  - Generate parameter interfaces for complex endpoint inputs
+  - Create response type mappings for each endpoint
 
 ### 1.2 Keep generated code fully automated and never manually edit
 - No manual edits allowed in generated/ folder.
 - Update documentation to warn contributors
 - Run npm run generate before committing or publishing.
+
+## 1.3. Schema Generation Strategy
+
+The SDK uses a hybrid approach combining generated types with enhanced runtime models:
+
+### 1.3.1 Generated Types (Low-Level)
+```typescript
+// src/generated/types/swagger-types.ts (auto-generated)
+export interface Display {
+  displayId?: number;
+  display?: string;
+  auditingUntil?: string; // ISO date string
+  licensed?: number; // 0 or 1
+  // ... other properties as defined in Swagger
+}
+
+export interface Campaign {
+  campaignId?: number;
+  campaign?: string;
+  isLayoutSpecific?: number; // 0 or 1
+  // ... other properties
+}
+```
+
+### 1.3.2 Enhanced Runtime Models
+```typescript
+// src/models/Display.ts (hand-crafted)
+import { Display as GeneratedDisplay } from '../generated/types/swagger-types';
+import { z } from 'zod';
+
+// Zod schema with transformers for runtime validation
+export const DisplaySchema = z.object({
+  displayId: z.number().optional(),
+  display: z.string().optional(),
+  auditingUntil: z.string().transform(str => str ? new Date(str) : undefined).optional(),
+  licensed: z.number().transform(val => Boolean(val)).optional(),
+  // ... other fields with appropriate transformations
+});
+
+export class Display implements GeneratedDisplay {
+  constructor(private data: GeneratedDisplay) {}
+
+  // Enhanced methods
+  get isLicensed(): boolean {
+    return Boolean(this.data.licensed);
+  }
+
+  get auditingUntilDate(): Date | undefined {
+    return this.data.auditingUntil ? new Date(this.data.auditingUntil) : undefined;
+  }
+
+  isAuditingActive(): boolean {
+    const until = this.auditingUntilDate;
+    return until ? until > new Date() : false;
+  }
+
+  // Proxy all original properties
+  get displayId() { return this.data.displayId; }
+  get display() { return this.data.display; }
+  // ... other properties
+}
+```
+
+### 1.3.3 API Integration Pattern
+```typescript
+// src/api/displays/Displays.ts
+import { Display as GeneratedDisplay } from '../../generated/types/swagger-types';
+import { Display } from '../../models/Display';
+
+export class DisplaysApi extends BaseApi {
+  async search(params: DisplaySearchParams): Promise<PaginatedResponse<Display>> {
+    const response = await this.httpClient.get<GeneratedDisplay[]>('/display', { params });
+
+    // Transform raw API response to enhanced models
+    const displays = response.data.map(raw => new Display(raw));
+
+    return {
+      data: displays,
+      total: response.headers['x-total-count'] || displays.length,
+      // ... pagination metadata
+    };
+  }
+}
+```
+
+### 1.3.4 Type Safety Benefits
+- **Compile-time safety**: Generated types ensure API compatibility
+- **Runtime validation**: Zod schemas validate and transform data
+- **Enhanced functionality**: Models provide business logic and utilities
+- **Maintainability**: Generated types auto-update with API changes
+- **Developer experience**: IntelliSense and type checking throughout
 
 ## 2. Core Components Implementation
 
@@ -290,25 +396,65 @@ Workflow stages:
 ### 🔄 Phase 2: Schema Generation & Essential API endpoints (Week 2) - IN PROGRESS
 - ✅ Base API class implementation
 - ✅ Displays API + comprehensive unit tests
-- [ ] **Schema Generation from Swagger** (PRIORITY)
-  - [ ] Install openapi-typescript and zod for runtime validation and zod transformers
-  - [ ] Generate types from Swagger: `src/generated/types/swagger-types.ts`
-  - [ ] Create generation script with post-processing
-  - [ ] Add npm scripts for type generation
-  - [ ] Implement Zod schemas for runtime validation and transformers
-- [ ] **Enhanced Runtime Models** (uses generated types as base)
-  - [ ] Display.ts - Enhanced model with utility methods
-  - [ ] Layout.ts - Enhanced model with validation
-  - [ ] Campaign.ts - Enhanced model with business logic
-  - [ ] Schedule.ts - Enhanced model with date handling
-  - [ ] Playlist.ts - Enhanced model with duration calculations
-  - [ ] Widget.ts - Enhanced model with type safety
-- [ ] **API Endpoint Implementations** (hand-crafted, never generated)
-  - [ ] Layouts API + unit tests
-  - [ ] Playlists API + unit tests
-  - [ ] Schedules API + unit tests
-  - [ ] Campaigns API + unit tests
-  - [ ] Widgets API + unit tests
+- [ ] **Schema Generation from Swagger** (PRIORITY - Day 1-2)
+  - [ ] Install dependencies: `npm install -D openapi-typescript@^6.7.0 zod@^3.22.0`
+  - [ ] Create `scripts/generate-types.js` - Main generation orchestrator
+  - [ ] Create `scripts/post-process-types.js` - Swagger 2.0 transformations
+  - [ ] Generate initial types: `npm run generate:types`
+  - [ ] Verify generated types compile without errors
+  - [ ] Test post-processing script with sample transformations
+  - [ ] Document generation process in README
+- [ ] **Enhanced Runtime Models** (Day 3-4 - uses generated types as base)
+  - [ ] Create `src/models/Display.ts`:
+    - [ ] Zod schema with boolean/date transformers
+    - [ ] Enhanced methods: `isLicensed()`, `isAuditingActive()`, `getStatusSummary()`
+    - [ ] Unit tests for transformations and methods
+  - [ ] Create `src/models/Layout.ts`:
+    - [ ] Status enum handling (Published/Draft)
+    - [ ] Duration calculations and validation
+    - [ ] Region management utilities
+  - [ ] Create `src/models/Campaign.ts`:
+    - [ ] Type discrimination (list vs ad campaigns)
+    - [ ] Layout assignment validation
+    - [ ] Playback cycle calculations
+  - [ ] Create `src/models/Schedule.ts`:
+    - [ ] Date/time handling with timezone support
+    - [ ] Recurrence pattern validation
+    - [ ] Event conflict detection utilities
+  - [ ] Create `src/models/Playlist.ts`:
+    - [ ] Dynamic vs static playlist handling
+    - [ ] Duration calculations for all widgets
+    - [ ] Media filtering and sorting utilities
+  - [ ] Create `src/models/Widget.ts`:
+    - [ ] Type-safe widget configuration
+    - [ ] Duration and transition handling
+    - [ ] Validation for widget-specific properties
+- [ ] **API Endpoint Implementations** (Day 5-7 - hand-crafted, never generated)
+  - [ ] Layouts API:
+    - [ ] CRUD operations with enhanced Layout models
+    - [ ] Background image/color management
+    - [ ] Template application and checkout/publish workflow
+    - [ ] Comprehensive unit tests with mocked responses
+  - [ ] Playlists API:
+    - [ ] Dynamic playlist filter management
+    - [ ] Media assignment and ordering
+    - [ ] Widget management within playlists
+    - [ ] Unit tests covering all playlist operations
+  - [ ] Schedules API:
+    - [ ] Event creation with recurrence patterns
+    - [ ] Display group assignment validation
+    - [ ] Geo-location and daypart handling
+    - [ ] Unit tests for complex scheduling scenarios
+  - [ ] Campaigns API:
+    - [ ] Layout assignment and ordering
+    - [ ] Ad campaign targeting and metrics
+    - [ ] Cycle-based playback configuration
+    - [ ] Unit tests for campaign lifecycle
+  - [ ] Widgets API:
+    - [ ] Widget creation with type validation
+    - [ ] Configuration management per widget type
+    - [ ] Transition and timing controls
+    - [ ] Unit tests for widget-specific functionality
 
 ### Phase 3: Extended API endpoints (Week 3)
 - [ ] Notifications + unit tests
@@ -368,15 +514,72 @@ Workflow stages:
     "prettier": "^3.1.0",
     "typedoc": "^0.25.4",
     "@types/node": "^20.10.0",
-    "openapi-typescript": "^6.7.0"
+    "openapi-typescript": "^6.7.0",
+    "@types/jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "nock": "^13.4.0",
+    "msw": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0",
+    "semantic-release": "^22.0.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0"
   },
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rm -rf dist coverage .nyc_output",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest --testPathPattern=integration",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
     "generate:types": "openapi-typescript expected-data-results/xibo-cms-develop-swagger.json --output src/generated/types/swagger-types.ts",
     "postgenerate:types": "node scripts/post-process-types.js",
-    "generate": "npm run generate:types && npm run postgenerate:types"
+    "generate": "npm run generate:types && npm run postgenerate:types",
+    "docs": "typedoc --out docs src/index.ts",
+    "docs:serve": "npx http-server docs -p 8080",
+    "prepublishOnly": "npm run clean && npm run generate && npm run build && npm run test",
+    "release": "semantic-release",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
   }
 }
 ```
+
+### 9.1 Additional Development Tools
+- **nock**: HTTP request mocking for unit tests
+- **msw**: Mock Service Worker for integration testing
+- **ts-jest**: TypeScript preprocessor for Jest
+- **husky**: Git hooks for code quality enforcement
+- **lint-staged**: Run linters on staged files only
+- **semantic-release**: Automated versioning and publishing
+
+### 9.2 Code Quality & CI/CD Integration
+- **ESLint + TypeScript**: Comprehensive linting with TypeScript support
+- **Prettier**: Consistent code formatting
+- **Pre-commit hooks**: Automatic linting and formatting before commits
+- **Coverage reporting**: Jest coverage with threshold enforcement
+- **Automated releases**: Semantic versioning with changelog generation
 
 ## 10. Success Metrics
 
