@@ -2,12 +2,15 @@
 
 Based on my review of the requirements and the Xibo CMS API documentation, here's a detailed implementation plan for the xibo-cms-sdk-js package:
 
-## 1. Project Structure
+## 1. Project Structure (Industry Standard)
 
 ```
 xibo-cms-sdk-js/
 ├── src/
 │   ├── index.ts                 # Main entry point
+│   ├── generated/               # ✔ Generated from Swagger - DO NOT EDIT
+│   │   └── types/
+│   │       └── swagger-types.ts # All generated schemas in one file
 │   ├── client/
 │   │   ├── XiboClient.ts        # Main SDK client class
 │   │   ├── HttpClient.ts        # HTTP client with retry logic
@@ -16,24 +19,22 @@ xibo-cms-sdk-js/
 │   │   ├── OAuth2Manager.ts     # OAuth2 authentication handler
 │   │   ├── TokenManager.ts      # Token caching and refresh
 │   │   └── index.ts
-│   ├── api/
+│   ├── api/                     # ✔ Hand-crafted endpoint implementations
 │   │   ├── base/
 │   │   │   ├── BaseApi.ts       # Base class for all API endpoints
 │   │   │   └── ApiResponse.ts   # Response wrapper
-│   │   ├── miscellaneous/
-│   │   ├── schedules/
-│   │   ├── notifications/
+│   │   ├── displays/
+│   │   │   ├── Displays.ts      # Display API implementation
+│   │   │   └── index.ts
 │   │   ├── layouts/
 │   │   ├── playlists/
-│   │   ├── widgets/
 │   │   ├── campaigns/
+│   │   ├── schedules/
+│   │   ├── notifications/
+│   │   ├── widgets/
 │   │   ├── templates/
 │   │   ├── resolutions/
 │   │   ├── library/
-│   │   ├── displays/
-│   │   │   ├── Displays.ts
-│   │   │   ├── Displays.types.ts # Optional
-│   │   │   └── index.ts
 │   │   ├── displayGroups/
 │   │   ├── displayProfiles/
 │   │   ├── datasets/
@@ -44,10 +45,16 @@ xibo-cms-sdk-js/
 │   │   ├── modules/
 │   │   ├── commands/
 │   │   ├── dayparts/
-│   │   └── tags/
-│   ├── models/
-│   │   ├── index.ts
-│   │   └── [model files for each entity]
+│   │   ├── tags/
+│   │   └── miscellaneous/
+│   ├── models/                  # ✔ Enhanced runtime models with methods
+│   │   ├── Display.ts           # Enhanced Display model with utilities
+│   │   ├── Layout.ts            # Enhanced Layout model
+│   │   ├── Campaign.ts          # Enhanced Campaign model
+│   │   ├── Schedule.ts          # Enhanced Schedule model
+│   │   ├── Playlist.ts          # Enhanced Playlist model
+│   │   ├── Widget.ts            # Enhanced Widget model
+│   │   └── index.ts
 │   ├── errors/
 │   │   ├── XiboError.ts
 │   │   ├── AuthenticationError.ts
@@ -58,8 +65,13 @@ xibo-cms-sdk-js/
 │   │   ├── retry.ts
 │   │   ├── pagination.ts
 │   │   └── index.ts
-│   └── types/
+│   └── types/                   # ✔ Internal SDK types (not generated)
+│       ├── api-types.ts         # Request/response wrappers
+│       ├── config-types.ts      # SDK configuration types
 │       └── index.ts
+├── scripts/                     # Build and generation scripts
+│   ├── generate-types.js        # Schema generation script
+│   └── post-process-types.js    # Post-processing for generated types
 ├── tests/
 │   ├── unit/
 │   ├── integration/
@@ -76,6 +88,17 @@ xibo-cms-sdk-js/
 ├── jest.config.js
 └── README.md
 ```
+### 1.1 Responsibilities of post-processing script `post-process-types.js`
+- Strip unsupported Swagger extensions if present.
+- Fix nullable/optional fields if the generator misses them.
+- Convert Swagger-style enums into TypeScript enums or unions.
+- Extract JSDoc comments or metadata for documentation.
+- (Optional) Split the large generated file into smaller chunks (but only if needed).
+
+### 1.2 Keep generated code fully automated and never manually edit
+- No manual edits allowed in generated/ folder.
+- Update documentation to warn contributors
+- Run npm run generate before committing or publishing.
 
 ## 2. Core Components Implementation
 
@@ -264,17 +287,28 @@ Workflow stages:
   - ✅ Connection testing
   - ✅ Authentication status monitoring
 
-### 🔄 Phase 2: Essential API endpoints (Week 2) - IN PROGRESS
+### 🔄 Phase 2: Schema Generation & Essential API endpoints (Week 2) - IN PROGRESS
 - ✅ Base API class implementation
 - ✅ Displays API + comprehensive unit tests
-- [ ] Layouts includes Layouts and Templates endpoints + unit tests
-- [ ] Playlists + unit tests
-- [ ] Schedules + unit tests
-- [ ] Campaigns + unit tests
-- [ ] Widgets   + unit tests
-- [ ] Basic models and types from Swagger specification; 
-  - types = internal or shared SDK types 
-  - models = API response payloads
+- [ ] **Schema Generation from Swagger** (PRIORITY)
+  - [ ] Install openapi-typescript and zod for runtime validation and zod transformers
+  - [ ] Generate types from Swagger: `src/generated/types/swagger-types.ts`
+  - [ ] Create generation script with post-processing
+  - [ ] Add npm scripts for type generation
+  - [ ] Implement Zod schemas for runtime validation and transformers
+- [ ] **Enhanced Runtime Models** (uses generated types as base)
+  - [ ] Display.ts - Enhanced model with utility methods
+  - [ ] Layout.ts - Enhanced model with validation
+  - [ ] Campaign.ts - Enhanced model with business logic
+  - [ ] Schedule.ts - Enhanced model with date handling
+  - [ ] Playlist.ts - Enhanced model with duration calculations
+  - [ ] Widget.ts - Enhanced model with type safety
+- [ ] **API Endpoint Implementations** (hand-crafted, never generated)
+  - [ ] Layouts API + unit tests
+  - [ ] Playlists API + unit tests
+  - [ ] Schedules API + unit tests
+  - [ ] Campaigns API + unit tests
+  - [ ] Widgets API + unit tests
 
 ### Phase 3: Extended API endpoints (Week 3)
 - [ ] Notifications + unit tests
@@ -324,7 +358,8 @@ Workflow stages:
     "axios": "^1.6.0",
     "winston": "^3.11.0",
     "p-retry": "^5.1.2",
-    "p-queue": "^7.4.1"
+    "p-queue": "^7.4.1",
+    "zod": "^3.22.0"
   },
   "devDependencies": {
     "typescript": "^5.3.0",
@@ -332,7 +367,13 @@ Workflow stages:
     "eslint": "^8.54.0",
     "prettier": "^3.1.0",
     "typedoc": "^0.25.4",
-    "@types/node": "^20.10.0"
+    "@types/node": "^20.10.0",
+    "openapi-typescript": "^6.7.0"
+  },
+  "scripts": {
+    "generate:types": "openapi-typescript expected-data-results/xibo-cms-develop-swagger.json --output src/generated/types/swagger-types.ts",
+    "postgenerate:types": "node scripts/post-process-types.js",
+    "generate": "npm run generate:types && npm run postgenerate:types"
   }
 }
 ```
